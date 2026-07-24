@@ -1,0 +1,375 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==================== SHADCN CSS VARIABLES ==================== */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+/* ==================== ESTILOS BASE ==================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-gray-800 font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+/* ==================== COMPONENTES PERSONALIZADOS ==================== */
+@layer components {
+  /* Botones */
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium 
+           transition-all duration-300 ease-out focus:outline-none focus:ring-2 
+           focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-primary-500 to-secondary-500 text-white 
+           hover:from-primary-600 hover:to-secondary-600 focus:ring-primary-500
+           shadow-soft hover:shadow-medium transform hover:-translate-y-0.5;
+  }
+
+  .btn-secondary {
+    @apply btn bg-white text-secondary-600 border-2 border-secondary-200 
+           hover:bg-secondary-50 hover:border-secondary-300 focus:ring-secondary-500;
+  }
+
+  .btn-agendar {
+    @apply btn bg-azul text-white hover:bg-azul-dark focus:ring-azul-dark shadow-soft hover:shadow-medium transform hover:-translate-y-0.5;
+  }
+
+  .btn-outline {
+    @apply btn bg-transparent border-2 border-primary-400 text-primary-600 
+           hover:bg-primary-50 focus:ring-primary-500;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full px-4 py-3 rounded-xl border-2 border-gray-200 
+           focus:border-primary-400 focus:ring-2 focus:ring-primary-200 
+           focus:outline-none transition-all duration-200
+           placeholder-gray-400;
+  }
+
+  .input-error {
+    @apply border-red-300 focus:border-red-400 focus:ring-red-200;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-2xl shadow-soft p-6 transition-all duration-300
+           hover:shadow-medium;
+  }
+
+  .card-service {
+    @apply card cursor-pointer border-2 border-transparent 
+           hover:border-primary-300 hover:-translate-y-1;
+  }
+
+  .card-service.selected {
+    @apply border-primary-500 bg-primary-50/50;
+  }
+
+  /* Secciones */
+  .section {
+    @apply py-16 px-4;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Headers */
+  .page-title {
+    @apply text-4xl md:text-5xl font-display font-bold text-gray-800 mb-4;
+  }
+
+  .section-title {
+    @apply text-2xl md:text-3xl font-display font-semibold text-gray-800 mb-6;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply badge bg-green-100 text-green-800;
+  }
+
+  .badge-warning {
+    @apply badge bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-error {
+    @apply badge bg-red-100 text-red-800;
+  }
+
+  .badge-info {
+    @apply badge bg-blue-100 text-blue-800;
+  }
+
+  .badge-primary {
+    @apply badge bg-primary-100 text-primary-700;
+  }
+}
+
+/* ==================== UTILIDADES PERSONALIZADAS ==================== */
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-primary {
+    @apply bg-gradient-to-br from-primary-400 via-primary-500 to-secondary-500;
+  }
+  .bg-solid-head{
+    background-color: #2196F3;
+  }
+  .bg-solid-datepicker{
+    background-color: #2196F3;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .glass {
+    @apply bg-white/70 backdrop-blur-lg;
+  }
+}
+
+/* ==================== REACT BIG CALENDAR ==================== */
+.rbc-calendar {
+  @apply font-sans;
+}
+
+.rbc-toolbar {
+  @apply flex flex-wrap items-center justify-between mb-6 gap-4;
+}
+
+.rbc-toolbar button {
+  @apply btn-secondary text-sm py-2 px-4;
+}
+
+.rbc-toolbar button.rbc-active {
+  @apply bg-primary-500 text-white border-primary-500;
+}
+
+.rbc-toolbar-label {
+  @apply text-xl font-display font-semibold text-gray-800;
+}
+
+.rbc-header {
+  @apply py-3 font-medium text-gray-600 text-sm uppercase tracking-wide;
+}
+
+.rbc-date-cell {
+  @apply text-right p-2;
+}
+
+.rbc-today {
+  @apply bg-primary-50;
+}
+
+.rbc-off-range-bg {
+  @apply bg-gray-50;
+}
+
+.rbc-event {
+  @apply rounded-lg px-2 py-1 text-sm font-medium border-0;
+}
+
+.rbc-event.rbc-selected {
+  @apply ring-2 ring-primary-400 ring-offset-2;
+}
+
+.rbc-day-slot .rbc-time-slot {
+  @apply border-gray-100;
+}
+
+.rbc-timeslot-group {
+  @apply border-gray-200;
+}
+
+.rbc-current-time-indicator {
+  @apply bg-primary-500;
+}
+
+/* ==================== SCROLLBAR PERSONALIZADA ==================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-300 rounded-full hover:bg-primary-400 transition-colors;
+}
+
+/* ==================== ANIMACIONES ==================== */
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== STEPPER ==================== */
+.stepper {
+  @apply flex items-center justify-center space-x-4;
+}
+
+.stepper-step {
+  @apply flex items-center;
+}
+
+.stepper-number {
+  @apply w-10 h-10 rounded-full flex items-center justify-center font-semibold 
+         transition-all duration-300;
+}
+
+.stepper-number.active {
+  @apply bg-primary-500 text-white shadow-soft;
+}
+
+.stepper-number.completed {
+  @apply bg-green-500 text-white;
+}
+
+.stepper-number.pending {
+  @apply bg-gray-200 text-gray-500;
+}
+
+.stepper-line {
+  @apply w-12 h-1 rounded-full mx-2 transition-all duration-300;
+}
+
+.stepper-line.active {
+  @apply bg-primary-500;
+}
+
+.stepper-line.pending {
+  @apply bg-gray-200;
+}
+
+/* ==================== DATEPICKER ==================== */
+.react-datepicker {
+  @apply font-sans border-0 shadow-medium rounded-2xl overflow-hidden;
+}
+
+.react-datepicker__header {
+  @apply bg-solid-datepicker text-white border-0 py-4;
+}
+
+.react-datepicker__current-month {
+  @apply text-lg font-semibold;
+}
+
+.react-datepicker__day-name {
+  @apply text-white/80 font-medium;
+}
+
+.react-datepicker__day {
+  @apply rounded-lg hover:bg-primary-100 transition-colors;
+}
+
+.react-datepicker__day--selected {
+  @apply bg-primary-500 text-white hover:bg-primary-600;
+}
+
+.react-datepicker__day--today {
+  @apply font-bold text-primary-600;
+}
+
+.react-datepicker__day--disabled {
+  @apply text-gray-300 hover:bg-transparent cursor-not-allowed;
+}
