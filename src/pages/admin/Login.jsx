@@ -25,7 +25,7 @@ const Login = () => {
             <HeartPulse className="w-8 h-8" />
             <div>
               <h1 className="text-2xl font-display font-bold">
-                Centro de Especialidades
+                Clínica Internacional De La Visión De Ecuador
               </h1>
               <p className="text-white/80 text-sm">Panel de administración</p>
             </div>
@@ -43,7 +43,9 @@ const Login = () => {
               <h2 className="text-xl font-display font-bold text-gray-800">
                 Iniciar sesión
               </h2>
-              <p className="text-sm text-gray-500 mt-1">Acceso exclusivo para administradores</p>
+              <p className="text-sm text-gray-500 mt-1">
+                Acceso exclusivo para administradores
+              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -55,7 +57,9 @@ const Login = () => {
                 <input
                   type="text"
                   value={form.usuario}
-                  onChange={(e) => setForm({ ...form, usuario: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, usuario: e.target.value })
+                  }
                   className="input"
                   placeholder="admin"
                   autoComplete="username"
@@ -71,7 +75,9 @@ const Login = () => {
                   <input
                     type={verContrasena ? "text" : "password"}
                     value={form.contrasena}
-                    onChange={(e) => setForm({ ...form, contrasena: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, contrasena: e.target.value })
+                    }
                     className="input pr-10"
                     placeholder="••••••••"
                     autoComplete="current-password"
@@ -81,7 +87,11 @@ const Login = () => {
                     onClick={() => setVerContrasena((v) => !v)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    {verContrasena ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {verContrasena ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -90,7 +100,10 @@ const Login = () => {
                 <p className="text-red-500 text-sm text-center">{error}</p>
               )}
 
-              <button type="submit" className="bg-[oklch(62.3%_0.214_259.815)] hover:brightness-90 text-white font-medium px-4 py-2.5 rounded-xl w-full transition-all flex justify-center">
+              <button
+                type="submit"
+                className="bg-[oklch(62.3%_0.214_259.815)] hover:brightness-90 text-white font-medium px-4 py-2.5 rounded-xl w-full transition-all flex justify-center"
+              >
                 Ingresar
               </button>
             </form>

@@ -150,7 +150,7 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
   }, [activeStep]);
 
   return (
-    <Box sx={{ maxWidth: 400 }}>
+    <Box sx={{ maxWidth: 400, pt: 3, pb: 3 }}>
       <Typography sx={{ color: "text.secondary" }}>
         {data.ticket || data.name}
       </Typography>

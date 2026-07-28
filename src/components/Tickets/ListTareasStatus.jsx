@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Paper from "@mui/material/Paper";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -46,43 +47,71 @@ export default function TicketList({ status }) {
 
   return (
     <>
-      {loading ? (
-        <div className="flex justify-center items-center py-8">
-          <div className="animate-spin rounded-full h-10 w-10 border-4 border-muted border-t-primary" />
-        </div>
-      ) : (
-        <List
-          sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-        >
-          {informacion.map((e) => {
-            if (status === e.status.v) {
-              return (
-                <ListItemButton
-                  key={e._id}
-                  onClick={() => setSelectedTicket(e)}
-                >
-                  <ListItemAvatar>
-                    <Avatar>
-                      <ConfirmationNumberIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={e.ticket || e.name}
-                    secondary={new Date(e.createdAt).toLocaleDateString()}
-                  />
-                </ListItemButton>
-              );
-            }
-            return null;
-          })}
-        </List>
-      )}
-      {selectedTicket && (
-        <VerticalLinearStepper
-          data={selectedTicket}
-          onFinalizado={handleFinalizado}
-        />
-      )}
+      <div className="flex gap-4 items-start">
+        {loading ? (
+          <div className="flex justify-center items-center py-8">
+            <div className="animate-spin rounded-full h-10 w-10 border-4 border-muted border-t-primary" />
+          </div>
+        ) : (
+          <Paper
+            elevation={2}
+            sx={{
+              width: "100%",
+              maxWidth: 360,
+              position: "sticky",
+              top: 16,
+              maxHeight: 420,
+              overflowY: "auto",
+              border: "1px solid",
+              borderColor: "grey.300",
+              scrollbarWidth: "thin",
+              scrollbarColor: (theme) =>
+                `${theme.palette.grey[400]} ${theme.palette.grey[100]}`,
+              "&::-webkit-scrollbar": {
+                width: 8,
+              },
+              "&::-webkit-scrollbar-track": {
+                backgroundColor: "grey.100",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "grey.400",
+                borderRadius: 4,
+              },
+            }}
+          >
+            <List sx={{ bgcolor: "background.paper" }}>
+              {informacion.map((e) => {
+                if (status === e.status.v) {
+                  return (
+                    <ListItemButton
+                      key={e._id}
+                      selected={selectedTicket?._id === e._id}
+                      onClick={() => setSelectedTicket(e)}
+                    >
+                      <ListItemAvatar>
+                        <Avatar>
+                          <ConfirmationNumberIcon />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={e.ticket || e.name}
+                        secondary={new Date(e.createdAt).toLocaleDateString()}
+                      />
+                    </ListItemButton>
+                  );
+                }
+                return null;
+              })}
+            </List>
+          </Paper>
+        )}
+        {selectedTicket && (
+          <VerticalLinearStepper
+            data={selectedTicket}
+            onFinalizado={handleFinalizado}
+          />
+        )}
+      </div>
       <Snackbar
         open={showSuccess}
         autoHideDuration={4000}
