@@ -45,6 +45,7 @@ export function AtencionGeneral({ onChange = () => {} }) {
         params,
         signal,
       });
+      console.log("Categorias:", data.data);
       setInfoCategories(data.data);
     } catch (error) {
       if (axios.isCancel(error)) return;

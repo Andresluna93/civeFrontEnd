@@ -17,37 +17,69 @@ import CorporateFareIcon from "@mui/icons-material/CorporateFare";
 import Alert from "@mui/material/Alert";
 import Fade from "@mui/material/Fade";
 import CheckIcon from "@mui/icons-material/Check";
+import axios from "axios";
 
 export function TareaFormRegister() {
   const filledStartId = useId();
-  const [nombres, setNombres] = useState("");
-  const [apellidos, setApellidos] = useState("");
-  const [telefono, setTelefono] = useState("");
+  const [name, setName] = useState("");
+  const [wa_id, setWaId] = useState("");
   const [cedula, setCedula] = useState("");
-  const [disabled, setDisabled] = useState(false);
+  const [disabled, setDisabled] = useState(true);
   const [open, setOpen] = useState(false);
   const [sucursalOpen, setSucursalOpen] = useState(false);
   const [servicio, setServicio] = useState("");
-  const [sucursal, setSucursal] = useState("");
+  const [sucursal, setSucursal] = useState(null);
   const [showMessage, setShowMessage] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleContinue = () => {
     console.log({
-      nombres,
-      apellidos,
+      name,
       cedula,
-      telefono,
+      wa_id,
       servicio,
       sucursal,
     });
+    fetchData("/api/chats/create");
     setDisabled(true);
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 2000);
   };
 
-  const handleEdit = () => {
-    setDisabled(false);
+  const fetchData = async (url) => {
+    setLoading(true);
+    try {
+      const dataToSend = {
+        name: name,
+        estado: "ingresado",
+        canal: "contact",
+        cedula: cedula,
+        wa_id: wa_id,
+        status: {
+          v: "ingresado",
+          date: new Date().toISOString(),
+          hora: new Date().toISOString(),
+        },
+        servicio: servicio,
+        sucursal: sucursal,
+      };
+      const response = await axios.post(url, dataToSend);
+      console.log("Enviar:", response.data);
+    } catch (error) {
+      console.error("Error en fetchData:", error.response?.data ?? error);
+    } finally {
+      setLoading(false);
+      setName("");
+      setCedula("");
+      setWaId("");
+      setServicio("");
+      setSucursal(null);
+    }
   };
+
+  /*const handleEdit = () => {
+    setDisabled(false);
+  };*/
 
   const handleServicesClick = () => {
     setOpen(!open);
@@ -64,15 +96,14 @@ export function TareaFormRegister() {
           <TextField
             label="Nombres"
             id={`${filledStartId}-input`}
-            sx={{ m: 1, width: "25ch" }}
+            sx={{ m: 1, width: "100%" }}
             variant="filled"
-            value={nombres}
+            value={name}
             onChange={(e) => {
-              setNombres(e.target.value);
+              setName(e.target.value);
             }}
-            disabled={disabled}
           />
-          <TextField
+          {/*<TextField
             label="Apellidos"
             id={`${filledStartId}-input`}
             sx={{ m: 1, width: "25ch" }}
@@ -82,7 +113,7 @@ export function TareaFormRegister() {
               setApellidos(e.target.value);
             }}
             disabled={disabled}
-          />
+          />*/}
           <br />
           <TextField
             label="Cedula"
@@ -94,19 +125,17 @@ export function TareaFormRegister() {
             onChange={(e) => {
               setCedula(e.target.value);
             }}
-            disabled={disabled}
           />
           <TextField
             label="Telefono"
             id={`filled-size-small`}
             sx={{ m: 1, width: "25ch" }}
             variant="filled"
-            value={telefono}
+            value={wa_id}
             size="small"
             onChange={(e) => {
-              setTelefono(e.target.value);
+              setWaId(e.target.value);
             }}
-            disabled={disabled}
           />
           <br />
           <ListItemButton onClick={handleServicesClick}>
@@ -124,6 +153,9 @@ export function TareaFormRegister() {
                 onClick={() => {
                   setServicio("Informacion");
                   setOpen(false);
+                  setDisabled(true);
+                  setSucursal(null);
+                  setSucursalOpen(false);
                 }}
               >
                 <ListItemIcon>
@@ -137,6 +169,7 @@ export function TareaFormRegister() {
                 onClick={() => {
                   setServicio("Agendamiento");
                   setOpen(false);
+                  setDisabled(false);
                 }}
               >
                 <ListItemIcon>
@@ -147,7 +180,7 @@ export function TareaFormRegister() {
             </List>
           </Collapse>
           <br />
-          <ListItemButton onClick={handleSucursalesClick}>
+          <ListItemButton onClick={handleSucursalesClick} disabled={disabled}>
             <ListItemIcon>
               <FormatListBulletedIcon />
             </ListItemIcon>
@@ -186,10 +219,16 @@ export function TareaFormRegister() {
           </Collapse>
         </div>
       </Box>
-      <Button onClick={handleContinue} variant="contained" sx={{ m: 1 }}>
-        Registrar
-      </Button>
-      <Button
+      {loading ? (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-muted border-t-primary" />
+        </div>
+      ) : (
+        <Button onClick={handleContinue} variant="contained" sx={{ m: 1 }}>
+          Registrar
+        </Button>
+      )}
+      {/*<Button
         onClick={handleEdit}
         variant="contained"
         sx={{ m: 1 }}
@@ -197,10 +236,10 @@ export function TareaFormRegister() {
         startIcon={<EditIcon />}
       >
         Editar
-      </Button>
+      </Button>*/}
       <Fade in={showMessage} timeout={500}>
         <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-          Here is a gentle confirmation that your action was successful.
+          El registro del Ticket Fue exitoso.
         </Alert>
       </Fade>
     </>

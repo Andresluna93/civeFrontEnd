@@ -1,4 +1,5 @@
 import { LineChart } from "@mui/x-charts/LineChart";
+import { ScatterChart } from "@mui/x-charts/ScatterChart";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { format, getISOWeek } from "date-fns";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 export function LimeTimeAtention() {
   const [info, setInfo] = useState(null);
-  const [periodoActivo, setPeriodoActivo] = useState("");
+  const [periodoActivo, setPeriodoActivo] = useState("dia");
   const [loading, setLoading] = useState(false);
 
   const fetchData = async (param) => {
@@ -76,6 +77,30 @@ export function LimeTimeAtention() {
         <div className="flex justify-center items-center py-8">
           <div className="animate-spin rounded-full h-10 w-10 border-4 border-muted border-t-primary" />
         </div>
+      ) : periodoActivo === "dia" ? (
+        <ScatterChart
+          xAxis={[{ label: "Cantidad", tickMinStep: 1 }]}
+          yAxis={[
+            {
+              label: "Tiempo",
+              tickMinStep: 1,
+              valueFormatter: (v) => `${String(v).padStart(2, "0")}:00`,
+            },
+          ]}
+          series={[
+            {
+              data: info.informacion.map((item, index) => ({
+                x: item.total,
+                y: parseInt(item.hora.split(":")[0], 10),
+                id: index,
+              })),
+              label: "Requerimientos",
+              valueFormatter: (v) =>
+                `${v.x} a las ${String(v.y).padStart(2, "0")}:00`,
+            },
+          ]}
+          height={300}
+        />
       ) : (
         <LineChart
           xAxis={[

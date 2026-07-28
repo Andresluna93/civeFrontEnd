@@ -192,6 +192,8 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
               <Typography>
                 {data.name}
                 <br />
+                {"Canal: " + data.canal}
+                <br />
                 {new Date(step.date).toLocaleDateString()} -{" "}
                 {new Date(step.hora).toLocaleTimeString()}
               </Typography>

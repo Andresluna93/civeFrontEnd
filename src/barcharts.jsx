@@ -15,7 +15,7 @@ export function Barcharts({ categorias }) {
         xAxis={[
           {
             id: "barCategories",
-            data: ["en proceso", "finalizada", "abandono"],
+            data: ["ingresado", "en proceso", "finalizada", "abandono"],
             scaleType: "band",
             height: 70,
             tickLabelStyle: { textAnchor: "end", fontSize: 12 },
@@ -30,13 +30,14 @@ export function Barcharts({ categorias }) {
         series={[
           {
             data: [
+              categorias?.ingresado ?? 0,
               categorias?.en_proceso ?? 0,
               categorias?.finalizado ?? 0,
               categorias?.abandono ?? 0,
             ],
           },
         ]}
-        width={450}
+        width={550}
         height={300}
       />
     </>
