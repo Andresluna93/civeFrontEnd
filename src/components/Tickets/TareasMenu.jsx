@@ -5,7 +5,6 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
 import TareasList from "@/components/Tickets/ListTareasStatus";
-import PersonIcon from "@mui/icons-material/Person";
 import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 
 const cards = [
@@ -88,7 +87,9 @@ export default function TicketsSelectionCard({ onStatusChange }) {
           </Card>
         ))}
       </Box>
-      {selectedStatus && <TareasList status={selectedStatus} />}
+      {selectedStatus && (
+        <TareasList key={selectedStatus} status={selectedStatus} />
+      )}
     </Box>
   );
 }

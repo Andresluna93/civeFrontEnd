@@ -52,7 +52,7 @@ const Dashboard = () => {
               <HeartPulse className="w-8 h-8" />
               <div>
                 <h1 className="text-2xl font-display font-bold">
-                  Centro de Especialidades
+                  Clínica Internacional De La Visión De Ecuador
                 </h1>
                 <p className="text-white/80 text-sm">Panel de administración</p>
               </div>
