@@ -81,26 +81,30 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
   };
 
   const handleReset = async () => {
-    await fetchData();
+    await fetchData("/api/chats/updatestatus", "finalizado", "finalizado");
     setActiveStep(0);
     setServiceItem(null);
     setObservacion(null);
   };
 
-  const fetchData = async () => {
+  const handleProcesar = async () => {
+    await fetchData("/api/chats/updatestatus", "en_proceso", "enProceso");
+  };
+
+  const fetchData = async (url, estate, status) => {
     try {
       const dataToSend = {
         id: data._id,
-        estado: "finalizado",
+        estado: estate,
         requeriment: serviceItem,
         observacion: observacion,
         status: {
-          v: "finalizado",
+          v: status,
           date: new Date().toISOString(),
           hora: new Date().toISOString(),
         },
       };
-      const response = await axios.post("/api/chats/updatestatus", dataToSend);
+      const response = await axios.post(url, dataToSend);
       console.log("Enviar:", response.data);
       onFinalizado?.();
     } catch (error) {
@@ -216,13 +220,19 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
                   data.status.v !== "finalizado") && (
                   <Button
                     variant="contained"
-                    onClick={handleNext}
+                    onClick={
+                      data.status.v === "ingresado"
+                        ? handleProcesar
+                        : handleNext
+                    }
                     sx={{ mt: 1, mr: 1 }}
                     ref={continueButtonRef}
                   >
-                    {index === data.statusH.length - 1
-                      ? "Finalizar"
-                      : "Continuar"}
+                    {data.status.v === "ingresado"
+                      ? "Procesar"
+                      : index === data.statusH.length - 1
+                        ? "Finalizar"
+                        : "Continuar"}
                   </Button>
                 )}
                 {index !== 0 && (
