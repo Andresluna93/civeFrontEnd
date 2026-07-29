@@ -30,20 +30,23 @@ export function TareaFormRegister() {
   const [servicio, setServicio] = useState("");
   const [sucursal, setSucursal] = useState(null);
   const [showMessage, setShowMessage] = useState(false);
+  const [showMessageError, setShowMessageError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleContinue = () => {
-    console.log({
+  const handleContinue = async () => {
+    setDisabled(true);
+    /*console.log({
       name,
       cedula,
       wa_id,
       servicio,
       sucursal,
-    });
-    fetchData("/api/chats/create");
-    setDisabled(true);
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 2000);
+    });*/
+    const ok = await fetchData("/api/chats/create");
+    if (ok) {
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 2000);
+    }
   };
 
   const fetchData = async (url) => {
@@ -63,10 +66,12 @@ export function TareaFormRegister() {
         servicio: servicio,
         sucursal: sucursal,
       };
-      const response = await axios.post(url, dataToSend);
-      console.log("Enviar:", response.data);
-    } catch (error) {
-      console.error("Error en fetchData:", error.response?.data ?? error);
+      await axios.post(url, dataToSend);
+      return true;
+    } catch {
+      setShowMessageError(true);
+      setTimeout(() => setShowMessageError(false), 2000);
+      return false;
     } finally {
       setLoading(false);
       setName("");
@@ -240,6 +245,11 @@ export function TareaFormRegister() {
       <Fade in={showMessage} timeout={500}>
         <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
           El registro del Ticket Fue exitoso.
+        </Alert>
+      </Fade>
+      <Fade in={showMessageError} timeout={500}>
+        <Alert icon={<CheckIcon fontSize="inherit" />} severity="error">
+          Hubo un error al registrar el Ticket.
         </Alert>
       </Fade>
     </>
