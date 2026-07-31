@@ -84,11 +84,11 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
   };
 
   const handleReset = async () => {
-    /*await fetchData("/api/chats/updatestatus", "finalizado", "finalizado");
+    await fetchData("/api/chats/updatestatus", "finalizado", "finalizado");
     setActiveStep(0);
     setServiceItem(null);
-    setObservacion(null);*/
-    console.log(fecha);
+    setObservacion(null);
+    //console.log(fecha);
   };
 
   const handleProcesar = async () => {
@@ -292,6 +292,7 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
                   format="DD/MM/YYYY"
                   value={fecha}
                   onChange={(nuevo) => setFecha(nuevo)}
+                  disabled={true}
                 />
               </LocalizationProvider>
               <br />
