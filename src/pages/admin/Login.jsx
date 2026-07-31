@@ -1,18 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HeartPulse, User, Lock, Eye, EyeOff } from "lucide-react";
+import { userApi } from "../../services/services.js";
 
 const Login = () => {
-  const [form, setForm] = useState({ usuario: "", contrasena: "" });
+  const [form, setForm] = useState({ nameUser: "", password: "" });
   const [verContrasena, setVerContrasena] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.usuario === "admin" && form.contrasena === "admin123") {
+    try {
+      const response = await userApi.login(form);
+      localStorage.setItem(
+        "usuario",
+        JSON.stringify({ name: response.data.name, role: response.data.role })
+      );
       navigate("/admin");
-    } else {
+    } catch (err) {
       setError("Usuario o contraseña incorrectos.");
     }
   };
@@ -56,9 +62,9 @@ const Login = () => {
                 </label>
                 <input
                   type="text"
-                  value={form.usuario}
+                  value={form.nameUser}
                   onChange={(e) =>
-                    setForm({ ...form, usuario: e.target.value })
+                    setForm({ ...form, nameUser: e.target.value })
                   }
                   className="input"
                   placeholder="admin"
@@ -74,9 +80,9 @@ const Login = () => {
                 <div className="relative">
                   <input
                     type={verContrasena ? "text" : "password"}
-                    value={form.contrasena}
+                    value={form.password}
                     onChange={(e) =>
-                      setForm({ ...form, contrasena: e.target.value })
+                      setForm({ ...form, password: e.target.value })
                     }
                     className="input pr-10"
                     placeholder="••••••••"

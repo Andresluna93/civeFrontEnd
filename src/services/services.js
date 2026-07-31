@@ -35,6 +35,17 @@ const adminApi = axios.create({
   },
 });
 
+export const userApi = {
+  login: async (data) => {
+    const response = await adminApi.post("/authUser/findUser", data);
+    return response.data;
+  },
+  registrar: async (data) => {
+    const response = await adminApi.post("/authUser/registerParticipant", data);
+    return response.data;
+  },
+};
+
 export const contactosAPI = {
   listar: async () => {
     const response = await adminApi.get("/chats/contactos");
@@ -44,11 +55,11 @@ export const contactosAPI = {
 
 export const chatsAPI = {
   listar: async () => {
-    const response = await adminApi.get("/chats");
+    const response = await adminApi.get("/chats/listarmensajes");
     return response.data;
   },
   mensajes: async (wa_id) => {
-    const response = await adminApi.get(`/chats/${wa_id}/mensajes`);
+    const response = await adminApi.get(`/chats/${wa_id}/historial`);
     return response.data;
   },
   enviarMensaje: async (wa_id, mensaje) => {

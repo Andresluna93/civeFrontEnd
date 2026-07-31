@@ -26,11 +26,12 @@ const fechaClave = (fecha) => new Date(fecha).toDateString();
 const etiquetaFecha = (fecha) => {
   const d = new Date(fecha);
   const hoy = new Date();
-  const diffDias = Math.floor((hoy.setHours(0,0,0,0) - d.setHours(0,0,0,0)) / 86400000);
+  const diffDias = Math.floor(
+    (hoy.setHours(0, 0, 0, 0) - d.setHours(0, 0, 0, 0)) / 86400000,
+  );
   if (diffDias === 0) return "Hoy";
   if (diffDias === 1) return "Ayer";
-  if (diffDias < 7)
-    return d.toLocaleDateString("es-EC", { weekday: "long" });
+  if (diffDias < 7) return d.toLocaleDateString("es-EC", { weekday: "long" });
   return new Date(fecha).toLocaleDateString("es-EC", {
     day: "2-digit",
     month: "2-digit",
@@ -51,7 +52,10 @@ const ListaMensajes = () => {
     const cargar = async () => {
       try {
         const data = await chatsAPI.listar();
-        setChats(data.chats ?? []);
+        console.log(data);
+        setChats(data.data ?? []);
+      } catch (error) {
+        console.error("Error cargando chats:", error);
       } finally {
         setLoadingChats(false);
       }
@@ -65,7 +69,18 @@ const ListaMensajes = () => {
       setLoadingMensajes(true);
       try {
         const data = await chatsAPI.mensajes(chatActivo.wa_id);
-        setMensajes(data.chat?.mensajes ?? []);
+        console.log("useEffect: ", data);
+        const historialCombinado = (data.data ?? [])
+          .flatMap((registro) => registro.historial ?? [])
+          .sort(
+            (a, b) =>
+              new Date(a.fecha ?? a.timestamp) -
+              new Date(b.fecha ?? b.timestamp),
+          );
+        setMensajes(historialCombinado);
+      } catch (error) {
+        console.error("Error cargando mensajes:", error);
+        setMensajes([]);
       } finally {
         setLoadingMensajes(false);
       }
@@ -78,12 +93,11 @@ const ListaMensajes = () => {
   }, [mensajes]);
 
   const chatsFiltrados = chats.filter((c) =>
-    c.nombre?.toLowerCase().includes(busqueda.toLowerCase())
+    c.name?.toLowerCase().includes(busqueda.toLowerCase()),
   );
 
   return (
     <div className="flex h-[calc(100vh-100px)] rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
-
       {/* Panel izquierdo */}
       <div className="w-80 flex-shrink-0 flex flex-col border-r border-gray-200 bg-white">
         <div className="px-4 py-3 bg-[oklch(62.3%_0.214_259.815)]">
@@ -109,7 +123,9 @@ const ListaMensajes = () => {
               <div className="animate-spin rounded-full h-8 w-8 border-4 border-[oklch(62.3%_0.214_259.815)] border-t-transparent" />
             </div>
           ) : chatsFiltrados.length === 0 ? (
-            <p className="text-center text-gray-400 py-10 text-sm">Sin conversaciones</p>
+            <p className="text-center text-gray-400 py-10 text-sm">
+              Sin conversaciones
+            </p>
           ) : (
             chatsFiltrados.map((chat) => (
               <button
@@ -119,11 +135,11 @@ const ListaMensajes = () => {
                   chatActivo?._id === chat._id ? "bg-[#ebebeb]" : ""
                 }`}
               >
-                <Avatar nombre={chat.nombre} />
+                <Avatar nombre={chat.name} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
                     <p className="text-sm font-semibold text-gray-800 truncate">
-                      {chat.nombre}
+                      {chat.name}
                     </p>
                     <span className="text-[11px] text-gray-400 ml-2 flex-shrink-0">
                       {formatHora(chat.ultimoMensaje?.fecha)}
@@ -156,9 +172,11 @@ const ListaMensajes = () => {
         ) : (
           <>
             <div className="flex items-center gap-3 px-4 py-3 bg-[#f0f2f5] border-b border-gray-200">
-              <Avatar nombre={chatActivo.nombre} />
+              <Avatar nombre={chatActivo.name} />
               <div>
-                <p className="font-semibold text-gray-800 text-sm">{chatActivo.nombre}</p>
+                <p className="font-semibold text-gray-800 text-sm">
+                  {chatActivo.name}
+                </p>
                 <p className="text-xs text-gray-400">{chatActivo.wa_id}</p>
               </div>
             </div>
@@ -169,12 +187,20 @@ const ListaMensajes = () => {
                   <div className="animate-spin rounded-full h-8 w-8 border-4 border-[oklch(62.3%_0.214_259.815)] border-t-transparent" />
                 </div>
               ) : mensajes.length === 0 ? (
-                <p className="text-center text-gray-400 text-sm py-10">Sin mensajes</p>
+                <p className="text-center text-gray-400 text-sm py-10">
+                  Sin mensajes
+                </p>
               ) : (
                 mensajes.map((msg, i) => {
-                  const enviado = msg.enviadoPor === "agente" || msg.enviadoPor === "bot";
+                  const enviado =
+                    msg.enviadoPor === "agente" || msg.enviadoPor === "bot";
                   const fechaActual = fechaClave(msg.fecha ?? msg.timestamp);
-                  const fechaAnterior = i > 0 ? fechaClave(mensajes[i - 1].fecha ?? mensajes[i - 1].timestamp) : null;
+                  const fechaAnterior =
+                    i > 0
+                      ? fechaClave(
+                          mensajes[i - 1].fecha ?? mensajes[i - 1].timestamp,
+                        )
+                      : null;
                   const mostrarEtiqueta = fechaActual !== fechaAnterior;
                   return (
                     <div key={msg._id ?? i}>
@@ -185,12 +211,16 @@ const ListaMensajes = () => {
                           </span>
                         </div>
                       )}
-                      <div className={`flex ${enviado ? "justify-end" : "justify-start"}`}>
-                        <div className={`max-w-[70%] px-3 py-2 rounded-lg shadow-sm text-sm whitespace-pre-wrap ${
-                          enviado
-                            ? "bg-[#d9fdd3] text-gray-800 rounded-br-none"
-                            : "bg-white text-gray-800 rounded-bl-none"
-                        }`}>
+                      <div
+                        className={`flex ${enviado ? "justify-end" : "justify-start"}`}
+                      >
+                        <div
+                          className={`max-w-[70%] px-3 py-2 rounded-lg shadow-sm text-sm whitespace-pre-wrap ${
+                            enviado
+                              ? "bg-[#d9fdd3] text-gray-800 rounded-br-none"
+                              : "bg-white text-gray-800 rounded-bl-none"
+                          }`}
+                        >
                           <p>{msg.texto ?? msg.mensaje ?? msg.contenido}</p>
                           <p className="text-[10px] text-gray-400 text-right mt-1">
                             {formatHora(msg.fecha ?? msg.timestamp)}

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogOut, ChevronDown } from "lucide-react";
 
-const UserMenu = ({ nombre = "Ramiro" }) => {
+const UserMenu = ({ nombre = "Usuario" }) => {
   const [abierto, setAbierto] = useState(false);
   const ref = useRef(null);
   const navigate = useNavigate();
@@ -31,7 +31,11 @@ const UserMenu = ({ nombre = "Ramiro" }) => {
       {abierto && (
         <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50">
           <button
-            onClick={() => { setAbierto(false); navigate("/"); }}
+            onClick={() => {
+              setAbierto(false);
+              localStorage.removeItem("usuario");
+              navigate("/");
+            }}
             className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
           >
             <LogOut className="w-4 h-4" />

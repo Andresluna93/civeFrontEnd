@@ -14,9 +14,11 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
-import StarBorder from "@mui/icons-material/StarBorder";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import axios from "axios";
@@ -63,6 +65,7 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
   console.log(data);
   const [open, setOpen] = useState(false);
   const [serviceItem, setServiceItem] = useState(null);
+  const [fecha, setFecha] = useState(null);
 
   const handleClick = () => {
     setOpen(!open);
@@ -81,10 +84,11 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
   };
 
   const handleReset = async () => {
-    await fetchData("/api/chats/updatestatus", "finalizado", "finalizado");
+    /*await fetchData("/api/chats/updatestatus", "finalizado", "finalizado");
     setActiveStep(0);
     setServiceItem(null);
-    setObservacion(null);
+    setObservacion(null);*/
+    console.log(fecha);
   };
 
   const handleProcesar = async () => {
@@ -282,6 +286,14 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
                   ))}
                 </List>
               </Collapse>
+              <br />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  format="DD/MM/YYYY"
+                  value={fecha}
+                  onChange={(nuevo) => setFecha(nuevo)}
+                />
+              </LocalizationProvider>
               <br />
               <TextField
                 label="Observación"

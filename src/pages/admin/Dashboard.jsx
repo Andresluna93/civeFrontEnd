@@ -12,6 +12,7 @@ import {
   ClipboardList,
   FileUser,
   Contact,
+  MessagesSquare,
 } from "lucide-react";
 
 import { AtencionGeneral } from "../../atencion_general";
@@ -36,12 +37,17 @@ const NAV_ITEMS = [
   // { key: "calendarios", label: "Calendarios", icon: Calendar },
   // { key: "Fetching", label: "Fetching", icon: FileSearchCorner },
   // { key: "Tickets", label: "Tickets", icon: Ticket },
+  { key: "Chats", label: "Chats", icon: MessageSquare },
   { key: "Registros", label: "Registros", icon: FileUser },
   { key: "Tareas", label: "Tareas", icon: ClipboardList },
 ];
 
 const Dashboard = () => {
   const [seccion, setSeccion] = useState("contactos");
+  const [usuario] = useState(() => {
+    const guardado = localStorage.getItem("usuario");
+    return guardado ? JSON.parse(guardado) : null;
+  });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -57,7 +63,7 @@ const Dashboard = () => {
                 <p className="text-white/80 text-sm">Panel de administración</p>
               </div>
             </div>
-            <UserMenu nombre="Ramiro" />
+            <UserMenu nombre={usuario?.name} />
           </div>
         </div>
       </header>
@@ -97,6 +103,7 @@ const Dashboard = () => {
           {/* {seccion === "Tickets" && <TicketsSelectionCard />} */}
           {seccion === "Registros" && <TareaFormRegister />}
           {seccion === "Tareas" && <TareasSelectionCard />}
+          {seccion === "Chats" && <ListaMensajes />}
         </main>
       </div>
     </div>
