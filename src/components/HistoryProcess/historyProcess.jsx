@@ -65,7 +65,7 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
   console.log(data);
   const [open, setOpen] = useState(false);
   const [serviceItem, setServiceItem] = useState(null);
-  const [fecha, setFecha] = useState(null);
+  //const [fecha, setFecha] = useState(null);
 
   const handleClick = () => {
     setOpen(!open);
@@ -286,7 +286,7 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
                   ))}
                 </List>
               </Collapse>
-              <br />
+              {/*<br />
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   format="DD/MM/YYYY"
@@ -294,7 +294,7 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
                   onChange={(nuevo) => setFecha(nuevo)}
                   disabled={true}
                 />
-              </LocalizationProvider>
+              </LocalizationProvider>*/}
               <br />
               <TextField
                 label="Observación"

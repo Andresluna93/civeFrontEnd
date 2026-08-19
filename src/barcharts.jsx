@@ -84,18 +84,18 @@ export function BarsGeneral({ categorias }) {
 }
 
 export function BarsSucursales({ categorias }) {
-  if (!categorias) return null;
+  const data = categorias ?? [];
   return (
     <>
       <label className="text-lg font-medium mb-2">
-        Numero de Agendamientos por Sucursales
+        Numero Global de Agendamientos en Sucursales
       </label>
       <br></br>
       <BarChart
         xAxis={[
           {
             id: "barCategories",
-            data: categorias.map((item) => item.sucursal),
+            data: data.map((item) => item.sucursal),
             scaleType: "band",
             height: 70,
           },
@@ -108,9 +108,10 @@ export function BarsSucursales({ categorias }) {
         ]}
         series={[
           {
-            data: categorias.map((item) => item.total),
+            data: data.map((item) => item.total),
           },
         ]}
+        localeText={{ noData: "No hay datos para mostrar" }}
         width={450}
         height={300}
       />
