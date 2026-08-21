@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { MonthPicker } from "./monthpicker";
 import { DatePicker } from "./datepicker";
 import { CalendarWithTime } from "./calendarwithtimepicker";
@@ -11,8 +10,6 @@ import Login from "./pages/admin/Login";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <Routes>
       <Route path="/" element={<Login />} />

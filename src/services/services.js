@@ -48,7 +48,15 @@ export const userApi = {
 
 export const contactosAPI = {
   listar: async () => {
-    const response = await adminApi.get("/chats/contactos");
+    const response = await adminApi.get("/contactos");
+    return response.data;
+  },
+  registrar: async (data) => {
+    const response = await adminApi.post("/contactos/register", data);
+    return response.data;
+  },
+  importListado: async (data, config) => {
+    const response = await adminApi.post("/contactos/importar", data, config);
     return response.data;
   },
 };

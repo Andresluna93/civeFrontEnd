@@ -13,6 +13,7 @@ import {
   FileUser,
   Contact,
   MessagesSquare,
+  UserPlus,
 } from "lucide-react";
 
 import { AtencionGeneral } from "../../atencion_general";
@@ -28,8 +29,12 @@ import TicketsSelectionCard from "@/components/Tickets/TicketsMenu";
 import TareasSelectionCard from "@/components/Tickets/TareasMenu";
 import { SucursalesData } from "../../sucursalesInfo";
 import { TareaFormRegister } from "@/components/Tickets/RegistroRequerimiento";
+import { UserForm } from "@/components/Forms/userForm";
+import { ContactForm } from "@/components/Forms/contactForm";
+import ContactView from "@/components/Contact/ContactView";
 
 const NAV_ITEMS = [
+  { key: "usuarios", label: "usuarios", icon: UserPlus },
   { key: "atencion", label: "Atencion", icon: ChartBarBig },
   { key: "tiempo", label: "Tiempo", icon: MessageSquare },
   { key: "sucursales", label: "Sucursales", icon: Building2 },
@@ -38,12 +43,12 @@ const NAV_ITEMS = [
   // { key: "Fetching", label: "Fetching", icon: FileSearchCorner },
   // { key: "Tickets", label: "Tickets", icon: Ticket },
   { key: "Chats", label: "Chats", icon: MessageSquare },
-  { key: "Registros", label: "Registros", icon: FileUser },
-  { key: "Tareas", label: "Tareas", icon: ClipboardList },
+  { key: "Registros", label: "Generar Tickets", icon: FileUser },
+  { key: "Tareas", label: "Tickets", icon: ClipboardList },
 ];
 
 const Dashboard = () => {
-  const [seccion, setSeccion] = useState("contactos");
+  const [seccion, setSeccion] = useState("Tareas");
   const [usuario] = useState(() => {
     const guardado = localStorage.getItem("usuario");
     return guardado ? JSON.parse(guardado) : null;
@@ -91,10 +96,11 @@ const Dashboard = () => {
 
         {/* Contenido */}
         <main className="flex-1 bg-gradient-to-br from-background via-white to-accent-light px-8 py-10">
+          {seccion === "usuarios" && <UserForm />}
           {seccion === "atencion" && <AtencionGeneral />}
           {seccion === "tiempo" && <LimeTimeAtention />}
           {seccion === "sucursales" && <SucursalesData />}
-          {seccion === "contactos" && <InteractiveList />}
+          {seccion === "contactos" && <ContactView />}
           {/* {seccion === "calendarios" && <Calendarios />} */}
           {/* {seccion === "Fetching" && (
             <DataFetcher url={"https://jsonplaceholder.typicode.com/users"} />

@@ -12,8 +12,10 @@ const ListaContactos = () => {
       setLoading(true);
       setError(null);
       const data = await contactosAPI.listar();
-      setContactos(data.contactos);
+      console.log("Contactos cargados:", data);
+      setContactos(data);
     } catch (err) {
+      console.error("Error al cargar contactos:", err);
       setError("No se pudo cargar la lista de contactos.");
     } finally {
       setLoading(false);
@@ -76,11 +78,9 @@ const ListaContactos = () => {
                   className="border-b last:border-0 hover:bg-gray-50 transition-colors"
                 >
                   <td className="px-6 py-4 text-gray-800 font-medium">
-                    {contacto.nombre}
+                    {contacto.nombres} {contacto.apellidos}
                   </td>
-                  <td className="px-6 py-4 text-gray-600">
-                    {contacto.wa_id}
-                  </td>
+                  <td className="px-6 py-4 text-gray-600">{contacto.telefono}</td>
                 </tr>
               ))}
             </tbody>
