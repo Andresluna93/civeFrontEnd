@@ -12,11 +12,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await userApi.login(form);
+      /*const response = await userApi.login(form);
+      console.log(response);
       localStorage.setItem(
         "usuario",
-        JSON.stringify({ name: response.data.name, role: response.data.role })
-      );
+        JSON.stringify({ name: response.data.name, role: response.data.role }),
+      );*/
+      await userApi.login(form);
       navigate("/admin");
     } catch (err) {
       setError("Usuario o contraseña incorrectos.");

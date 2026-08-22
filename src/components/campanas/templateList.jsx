@@ -9,10 +9,9 @@ import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import PersonIcon from "@mui/icons-material/Person";
-import CallIcon from "@mui/icons-material/Call";
+import ArticleIcon from "@mui/icons-material/Article";
 import SendIcon from "@mui/icons-material/Send";
-import { contactosAPI, CampanaMarketingAPI } from "../../services/services.js";
+import { TemplatesApi } from "../../services/services.js";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 
@@ -62,22 +61,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function InteractiveList() {
-  const [contactos, setContactos] = useState([]);
+export default function TemplateList() {
+  const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [busqueda, setBusqueda] = useState("");
 
-  const contactosFiltrados = contactos.filter((contact) =>
-    `${contact.nombres} ${contact.apellidos}`
+  const templatesFiltrados = templates.filter((template) =>
+    `${template.name} ${template.category}`
       .toLowerCase()
       .includes(busqueda.toLowerCase()),
   );
 
-  const fetchData = async () => {
+  const fetchDataTemplates = async () => {
     setLoading(true);
     try {
-      const response = await contactosAPI.listar();
-      setContactos(response);
+      const response = await TemplatesApi.getAllTemplates();
+      console.log(response);
+      setTemplates(response);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -85,16 +85,9 @@ export default function InteractiveList() {
     }
   };
 
-  const fetchSendTemplate = async (name, cellphone) => {
-    const response = await CampanaMarketingAPI.enviarTemplate({
-      nombres: name,
-      telefono: cellphone,
-    });
-    console.log(response);//borrar
-  };
-
   useEffect(() => {
-    fetchData();
+    //fetchData();
+    fetchDataTemplates();
   }, []);
 
   return (
@@ -108,7 +101,7 @@ export default function InteractiveList() {
             }}
           >
             <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
-              Lista de Contactos
+              Listado de Templates
             </Typography>
             <Search>
               <SearchIconWrapper>
@@ -128,27 +121,15 @@ export default function InteractiveList() {
             ) : (
               <Demo>
                 <List dense={false}>
-                  {contactosFiltrados.map((contact) => (
+                  {templatesFiltrados.map((template) => (
                     <ListItem
-                      key={contact._id}
+                      key={template._id}
                       secondaryAction={
-                        <Box sx={{ display: "flex", gap: 1.5 }}>
-                          <IconButton
-                            edge="end"
-                            aria-label="call"
-                            onClick={() => alert("Llamando...")}
-                          >
-                            <CallIcon />
-                          </IconButton>
+                        <Box sx={{ display: "flex", gap: 1 }}>
                           <IconButton
                             edge="end"
                             aria-label="send"
-                            onClick={() =>
-                              fetchSendTemplate(
-                                contact.nombres,
-                                contact.telefono,
-                              )
-                            }
+                            onClick={() => alert("Enviando...")}
                           >
                             <SendIcon />
                           </IconButton>
@@ -157,12 +138,12 @@ export default function InteractiveList() {
                     >
                       <ListItemAvatar>
                         <Avatar>
-                          <PersonIcon />
+                          <ArticleIcon />
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
-                        primary={`${contact.nombres} ${contact.apellidos}`}
-                        secondary={`+${contact.telefono} / ${contact.identificador}`}
+                        primary={`${template.name}`}
+                        secondary={`${template.category} / ${template.status}`}
                       />
                     </ListItem>
                   ))}

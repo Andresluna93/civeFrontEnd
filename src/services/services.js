@@ -37,11 +37,19 @@ const adminApi = axios.create({
 
 export const userApi = {
   login: async (data) => {
-    const response = await adminApi.post("/authUser/findUser", data);
+    const response = await adminApi.post("/authUser/login", data);
     return response.data;
+  },
+  logout: async () => {
+    const response = await adminApi.post("/authUser/logout");
+    return response;
   },
   registrar: async (data) => {
     const response = await adminApi.post("/authUser/registerParticipant", data);
+    return response.data;
+  },
+  dashboard: async () => {
+    const response = await adminApi.get("/authUser/dashboard");
     return response.data;
   },
 };
@@ -79,3 +87,24 @@ export const chatsAPI = {
     return response.data;
   },
 };
+
+export const CampanaMarketingAPI = {
+  enviarTemplate: async (data) => {
+    const response = await adminApi.post(
+      "/campanaMarketing/sendTemplate",
+      data,
+    );
+    return response;
+  },
+};
+
+export const TemplatesApi = {
+  getAllTemplates: async()=>{
+    const response = await adminApi.get("/plantillas");
+    return response.data
+  },
+  updateListTemplate: async()=>{
+    const response = await adminApi.post("/plantillas/sincronizar");
+    return response
+  }
+}

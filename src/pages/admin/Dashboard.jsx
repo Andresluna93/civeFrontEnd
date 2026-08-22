@@ -1,19 +1,15 @@
 import { useState } from "react";
 import {
   HeartPulse,
-  Users,
   MessageSquare,
   Calendar,
   ChartBarBig,
   Building2,
-  FileSearchCorner,
-  History,
-  Ticket,
   ClipboardList,
   FileUser,
   Contact,
-  MessagesSquare,
   UserPlus,
+  Send,
 } from "lucide-react";
 
 import { AtencionGeneral } from "../../atencion_general";
@@ -29,9 +25,10 @@ import TicketsSelectionCard from "@/components/Tickets/TicketsMenu";
 import TareasSelectionCard from "@/components/Tickets/TareasMenu";
 import { SucursalesData } from "../../sucursalesInfo";
 import { TareaFormRegister } from "@/components/Tickets/RegistroRequerimiento";
-import { UserForm } from "@/components/Forms/userForm";
 import { ContactForm } from "@/components/Forms/contactForm";
-import ContactView from "@/components/Contact/ContactView";
+import CampanasView from "@/components/campanas/CampanasView";
+import UsersView from "@/components/Users/UsersView";
+import { userApi } from "@/services/services";
 
 const NAV_ITEMS = [
   { key: "usuarios", label: "usuarios", icon: UserPlus },
@@ -45,13 +42,17 @@ const NAV_ITEMS = [
   { key: "Chats", label: "Chats", icon: MessageSquare },
   { key: "Registros", label: "Generar Tickets", icon: FileUser },
   { key: "Tareas", label: "Tickets", icon: ClipboardList },
+  { key: "Campanas", label: "Campañas", icon: Send },
 ];
 
 const Dashboard = () => {
   const [seccion, setSeccion] = useState("Tareas");
-  const [usuario] = useState(() => {
-    const guardado = localStorage.getItem("usuario");
-    return guardado ? JSON.parse(guardado) : null;
+  const [usuario, setUsuario] = useState(async () => {
+    /*const guardado = localStorage.getItem("usuario");
+    return guardado ? JSON.parse(guardado) : null;*/
+    const guardado = await userApi.dashboard();
+    setUsuario(guardado);
+    //return guardado ? JSON.parse(guardado) : null;;
   });
 
   return (
@@ -96,7 +97,7 @@ const Dashboard = () => {
 
         {/* Contenido */}
         <main className="flex-1 bg-gradient-to-br from-background via-white to-accent-light px-8 py-10">
-          {seccion === "usuarios" && <UserForm />}
+          {seccion === "usuarios" && <UsersView />}
           {seccion === "atencion" && <AtencionGeneral />}
           {seccion === "tiempo" && <LimeTimeAtention />}
           {seccion === "sucursales" && <SucursalesData />}
@@ -110,6 +111,7 @@ const Dashboard = () => {
           {seccion === "Registros" && <TareaFormRegister />}
           {seccion === "Tareas" && <TareasSelectionCard />}
           {seccion === "Chats" && <ListaMensajes />}
+          {seccion === "Campanas" && <CampanasView />}
         </main>
       </div>
     </div>

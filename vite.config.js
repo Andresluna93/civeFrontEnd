@@ -13,7 +13,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://civebackend-production.up.railway.app",
+        target: "https://unsized-slackingly-slyvia.ngrok-free.dev",
         changeOrigin: true,
         secure: true,
       },

@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 import PersonIcon from "@mui/icons-material/Person";
 import CallIcon from "@mui/icons-material/Call";
 import SendIcon from "@mui/icons-material/Send";
-import { contactosAPI, CampanaMarketingAPI } from "../../services/services.js";
+import { contactosAPI } from "../../services/services.js";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 
@@ -62,7 +62,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function InteractiveList() {
+export default function InteractiveListUsers() {
   const [contactos, setContactos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [busqueda, setBusqueda] = useState("");
@@ -83,14 +83,6 @@ export default function InteractiveList() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fetchSendTemplate = async (name, cellphone) => {
-    const response = await CampanaMarketingAPI.enviarTemplate({
-      nombres: name,
-      telefono: cellphone,
-    });
-    console.log(response);//borrar
   };
 
   useEffect(() => {
@@ -143,12 +135,7 @@ export default function InteractiveList() {
                           <IconButton
                             edge="end"
                             aria-label="send"
-                            onClick={() =>
-                              fetchSendTemplate(
-                                contact.nombres,
-                                contact.telefono,
-                              )
-                            }
+                            onClick={() => alert("Enviando...")}
                           >
                             <SendIcon />
                           </IconButton>
