@@ -26,6 +26,7 @@ import TareasSelectionCard from "@/components/Tickets/TareasMenu";
 import { SucursalesData } from "../../sucursalesInfo";
 import { TareaFormRegister } from "@/components/Tickets/RegistroRequerimiento";
 import { ContactForm } from "@/components/Forms/contactForm";
+import ContactView from "@/components/Contact/ContactView";
 import CampanasView from "@/components/campanas/CampanasView";
 import UsersView from "@/components/Users/UsersView";
 import { userApi } from "@/services/services";
