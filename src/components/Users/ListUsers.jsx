@@ -10,9 +10,8 @@ import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import PersonIcon from "@mui/icons-material/Person";
-import CallIcon from "@mui/icons-material/Call";
-import SendIcon from "@mui/icons-material/Send";
-import { contactosAPI } from "../../services/services.js";
+import EditDocumentIcon from '@mui/icons-material/EditDocument';
+import { userApi } from "../../services/services.js";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 
@@ -63,21 +62,19 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function InteractiveListUsers() {
-  const [contactos, setContactos] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [busqueda, setBusqueda] = useState("");
 
-  const contactosFiltrados = contactos.filter((contact) =>
-    `${contact.nombres} ${contact.apellidos}`
-      .toLowerCase()
-      .includes(busqueda.toLowerCase()),
+  const usuariosFiltrados = users.filter((use) =>
+    `${use.nameUser}`.toLowerCase().includes(busqueda.toLowerCase()),
   );
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await contactosAPI.listar();
-      setContactos(response);
+      const { usuarios } = await userApi.getAllUsers();
+      setUsers(usuarios);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -100,7 +97,7 @@ export default function InteractiveListUsers() {
             }}
           >
             <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
-              Lista de Contactos
+              Listado de Usuarios Registrados
             </Typography>
             <Search>
               <SearchIconWrapper>
@@ -120,9 +117,9 @@ export default function InteractiveListUsers() {
             ) : (
               <Demo>
                 <List dense={false}>
-                  {contactosFiltrados.map((contact) => (
+                  {usuariosFiltrados.map((user) => (
                     <ListItem
-                      key={contact._id}
+                      key={user._id}
                       secondaryAction={
                         <Box sx={{ display: "flex", gap: 1.5 }}>
                           <IconButton
@@ -130,14 +127,7 @@ export default function InteractiveListUsers() {
                             aria-label="call"
                             onClick={() => alert("Llamando...")}
                           >
-                            <CallIcon />
-                          </IconButton>
-                          <IconButton
-                            edge="end"
-                            aria-label="send"
-                            onClick={() => alert("Enviando...")}
-                          >
-                            <SendIcon />
+                            <EditDocumentIcon />
                           </IconButton>
                         </Box>
                       }
@@ -148,8 +138,8 @@ export default function InteractiveListUsers() {
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
-                        primary={`${contact.nombres} ${contact.apellidos}`}
-                        secondary={`+${contact.telefono} / ${contact.identificador}`}
+                        primary={`${user.nameUser}`}
+                        secondary={`${user.role}`}
                       />
                     </ListItem>
                   ))}

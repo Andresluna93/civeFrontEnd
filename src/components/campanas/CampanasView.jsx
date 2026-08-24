@@ -16,7 +16,7 @@ export default function ContactView() {
   return (
     <>
       <Box sx={{ "& > :not(style)": { m: 1 } }}>
-        <Fab variant="extended" name="ContactForm" onClick={handleViews}>
+        <Fab variant="extended" name="ContactForm" onClick={handleViews} disabled={true}>
           <AddIcon sx={{ mr: 1 }} />
           Crear
         </Fab>
@@ -26,7 +26,8 @@ export default function ContactView() {
         </Fab>
       </Box>
       <Box sx={{ "& > :not(style)": { m: 1 }, mt: 5 }}>
-        {view === "ContactForm" ? <TemplateForm /> : <TemplateList />}
+        {/*{view === "ContactForm" ? <TemplateForm /> : <TemplateList />}*/}
+        <TemplateList />
       </Box>
     </>
   );

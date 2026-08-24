@@ -35,6 +35,18 @@ const adminApi = axios.create({
   },
 });
 
+// Instancia dedicada para envío de archivos (multipart/form-data).
+// No se fija "Content-Type" a mano: al pasar un FormData, el navegador
+// agrega el header con el boundary correcto automáticamente. Si se
+// setea "multipart/form-data" manualmente, el boundary se pierde y el
+// backend no puede parsear el archivo.
+const adminApiMultipart = axios.create({
+  baseURL: "/api",
+  headers: {
+    "ngrok-skip-browser-warning": "true",
+  },
+});
+
 export const userApi = {
   login: async (data) => {
     const response = await adminApi.post("/authUser/login", data);
@@ -52,6 +64,10 @@ export const userApi = {
     const response = await adminApi.get("/authUser/dashboard");
     return response.data;
   },
+  getAllUsers: async () => {
+    const response = await adminApi.get("/authUser/getUsers");
+    return response.data;
+  },
 };
 
 export const contactosAPI = {
@@ -63,8 +79,11 @@ export const contactosAPI = {
     const response = await adminApi.post("/contactos/register", data);
     return response.data;
   },
-  importListado: async (data, config) => {
-    const response = await adminApi.post("/contactos/importar", data, config);
+  importListado: async (formData) => {
+    const response = await adminApiMultipart.post(
+      "/contactos/importar",
+      formData,
+    );
     return response.data;
   },
 };
@@ -96,15 +115,29 @@ export const CampanaMarketingAPI = {
     );
     return response;
   },
+  enviarUsersTemplate: async (formData) => {
+    const response = await adminApiMultipart.post(
+      "/campanaMarketing/sendTemplateArchivo",
+      formData,
+    );
+    return response;
+  },
 };
 
 export const TemplatesApi = {
-  getAllTemplates: async()=>{
+  getAllTemplates: async () => {
     const response = await adminApi.get("/plantillas");
-    return response.data
+    return response.data;
   },
-  updateListTemplate: async()=>{
+  updateListTemplate: async () => {
     const response = await adminApi.post("/plantillas/sincronizar");
-    return response
-  }
-}
+    return response;
+  },
+};
+
+export const EstadosMensajesApi = {
+  getStatus: async (id) => {
+    const response = await adminApi.get(`/estadosMensajes?plantilla=${id}`);
+    return response.data;
+  },
+};
