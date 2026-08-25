@@ -158,6 +158,14 @@ export default function TemplateList() {
     }
   };
 
+  const fetchUpdateTemplates = async () => {
+    try {
+      await TemplatesApi.updateListTemplate();
+    } catch (error) {
+      console.error("Error fetching update templates:", error);
+    }
+  };
+
   const fetchStatusTemplates = async (id) => {
     setLoading(true);
     try {
@@ -184,6 +192,7 @@ export default function TemplateList() {
   };
 
   useEffect(() => {
+    //fetchUpdateTemplates();
     fetchDataTemplates();
   }, []);
 
@@ -354,7 +363,9 @@ export default function TemplateList() {
                         {statConfig.map(({ key, label, color }) => (
                           <Grid key={key} size={6}>
                             <Card variant="outlined">
-                              <CardContent sx={{ textAlign: "center", py: 1.5 }}>
+                              <CardContent
+                                sx={{ textAlign: "center", py: 1.5 }}
+                              >
                                 <Typography variant="h5">
                                   {contador?.[key] ?? 0}
                                 </Typography>
