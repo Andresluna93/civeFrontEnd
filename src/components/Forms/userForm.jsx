@@ -16,6 +16,7 @@ import Alert from "@mui/material/Alert";
 import Fade from "@mui/material/Fade";
 import CheckIcon from "@mui/icons-material/Check";
 import { userApi } from "../../services/services.js";
+import ErrorMessage from "@/components/atoms/errorMessage.jsx";
 
 export function UserForm() {
   const [form, setForm] = useState({
@@ -24,6 +25,7 @@ export function UserForm() {
     name: "",
     role: "",
   });
+  const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
   const [showMessageError, setShowMessageError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -33,8 +35,8 @@ export function UserForm() {
   const handleContinue = async (e) => {
     e.preventDefault();
     if (!form.nameUser || !form.password || !form.name || !form.role) {
+      setMessage("Uno de los campos del formulario Registro estan vacios");
       setShowMessageError(true);
-      setTimeout(() => setShowMessageError(false), 2000);
       return;
     }
     setLoading(true);
@@ -45,8 +47,8 @@ export function UserForm() {
       setTimeout(() => setShowMessage(false), 2000);
     } catch (error) {
       console.error("Error al registrar el usuario:", error);
+      setMessage("Ocurrio un Error al registrar el usuario");
       setShowMessageError(true);
-      setTimeout(() => setShowMessageError(false), 2000);
     } finally {
       setLoading(false);
     }
@@ -159,11 +161,12 @@ export function UserForm() {
           El registro del Usuario Fue exitoso.
         </Alert>
       </Fade>
-      <Fade in={showMessageError} timeout={500}>
-        <Alert icon={<CheckIcon fontSize="inherit" />} severity="error">
-          Hubo un error al registrar el Usuario.
-        </Alert>
-      </Fade>
+      <ErrorMessage
+        message={message}
+        show={showMessageError}
+        duration={2000}
+        onHide={() => setShowMessageError(false)}
+      />
     </>
   );
 }

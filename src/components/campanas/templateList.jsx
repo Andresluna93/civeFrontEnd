@@ -5,26 +5,29 @@ import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import SendIcon from "@mui/icons-material/Send";
-import MarkChatUnreadIcon from "@mui/icons-material/MarkChatUnread";
-import MarkChatReadIcon from "@mui/icons-material/MarkChatRead";
-import BeenhereIcon from "@mui/icons-material/Beenhere";
-import SmsFailedIcon from "@mui/icons-material/SmsFailed";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import {
   TemplatesApi,
   CampanaMarketingAPI,
   EstadosMensajesApi,
 } from "../../services/services.js";
+import { exportarEstadosAExcel } from "../../services/exceltool.js";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
+import CardActionArea from "@mui/material/CardActionArea";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import Modal from "@mui/material/Modal";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import Chip from "@mui/material/Chip";
+import Fab from "@mui/material/Fab";
+import UpdateIcon from "@mui/icons-material/Update";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import CheckIcon from "@mui/icons-material/Check";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -108,8 +111,11 @@ export default function TemplateList() {
   const [open, setOpen] = useState(false);
   const [openEstatics, setOpenEstatics] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [messageDataSatus, setMessageDataStatus] = useState([]);
   const [loadings, setLoadings] = useState(false);
   const [contador, setContador] = useState({});
+  const [showMessage, setShowMessage] = useState(false);
+  const [showMessageError, setShowMessageError] = useState(false);
 
   useEffect(() => {
     if (!loadings) return;
@@ -149,7 +155,6 @@ export default function TemplateList() {
     setLoading(true);
     try {
       const response = await TemplatesApi.getAllTemplates();
-      console.log(response);
       setTemplates(response);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -166,12 +171,17 @@ export default function TemplateList() {
     }
   };
 
+  const handleUpdateAndReload = async () => {
+    await fetchUpdateTemplates();
+    await fetchDataTemplates();
+  };
+
   const fetchStatusTemplates = async (id) => {
     setLoading(true);
     try {
       const response = await EstadosMensajesApi.getStatus(id);
-      console.log(response);
       setContador(response.conteo);
+      setMessageDataStatus(response.registros);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -179,20 +189,69 @@ export default function TemplateList() {
     }
   };
 
+  function getMessagePerStatus(arg, temp) {
+    const statusMap = {
+      Enviados: "sent",
+      Leídos: "read",
+      Recibidos: "delivered",
+      Fallidos: "failed",
+    };
+
+    const status = statusMap[arg];
+    if (!status) {
+      return "Estado desconocido ⚠️";
+    }
+
+    const datos = messageDataSatus
+      .filter((item) => item.status === status)
+      .map((item) => ({
+        telefono: item.recipientId,
+        fecha: item.updatedAt,
+        estado: item.status,
+      }));
+
+    const payload = {
+      nombre: temp.name,
+      tipo: arg,
+      mensajes: datos,
+    };
+    exportarEstadosAExcel(payload);
+  }
+
+  function getAllMessagesStatus(temp) {
+    const datos = messageDataSatus.map((item) => ({
+      telefono: item.recipientId,
+      fecha: item.updatedAt,
+      estado: item.status,
+    }));
+
+    const payload = {
+      nombre: temp.name,
+      tipo: "Recopilados",
+      mensajes: datos,
+    };
+
+    exportarEstadosAExcel(payload);
+  }
+
   const fetchSendTemplatesUsers = async (template, archivo) => {
+    setLoadings(true);
     try {
       const formData = new FormData();
       formData.append("templateName", template);
       formData.append("file", archivo);
       const response = await CampanaMarketingAPI.enviarUsersTemplate(formData);
       console.log(response);
+      setShowMessage(true);
     } catch (error) {
       console.error("Error fetching template Users:", error);
+      setShowMessageError(true);
+    } finally {
+      setLoadings(false);
     }
   };
 
   useEffect(() => {
-    //fetchUpdateTemplates();
     fetchDataTemplates();
   }, []);
 
@@ -206,9 +265,26 @@ export default function TemplateList() {
               md: 6,
             }}
           >
-            <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
-              Listado de Templates
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
+                Listado de Templates
+              </Typography>
+              <Fab
+                variant="extended"
+                name="ContactForm"
+                onClick={handleUpdateAndReload}
+              >
+                <UpdateIcon sx={{ mr: 1 }} />
+                Actualizar
+              </Fab>
+            </Box>
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -363,26 +439,65 @@ export default function TemplateList() {
                         {statConfig.map(({ key, label, color }) => (
                           <Grid key={key} size={6}>
                             <Card variant="outlined">
-                              <CardContent
-                                sx={{ textAlign: "center", py: 1.5 }}
+                              <CardActionArea
+                                onClick={() =>
+                                  getMessagePerStatus(label, selectedTemplate)
+                                }
                               >
-                                <Typography variant="h5">
-                                  {contador?.[key] ?? 0}
-                                </Typography>
-                                <Chip
-                                  size="small"
-                                  label={label}
-                                  color={color}
-                                  sx={{ mt: 0.5 }}
-                                />
-                              </CardContent>
+                                <CardContent
+                                  sx={{ textAlign: "center", py: 1.5 }}
+                                >
+                                  <Typography variant="h5">
+                                    {contador?.[key] ?? 0}
+                                  </Typography>
+                                  <Chip
+                                    size="small"
+                                    label={label}
+                                    color={color}
+                                    sx={{ mt: 0.5 }}
+                                  />
+                                </CardContent>
+                              </CardActionArea>
                             </Card>
                           </Grid>
                         ))}
+                        <Button
+                          onClick={() => getAllMessagesStatus(selectedTemplate)}
+                        >
+                          Descargar Todos
+                        </Button>
                       </Grid>
                     </Box>
                   </Box>
                 </Modal>
+                <Snackbar
+                  open={showMessage}
+                  autoHideDuration={2000}
+                  onClose={() => setShowMessage(false)}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                >
+                  <Alert
+                    icon={<CheckIcon fontSize="inherit" />}
+                    severity="success"
+                    onClose={() => setShowMessage(false)}
+                  >
+                    El Envio De La Plantilla Fue exitoso.
+                  </Alert>
+                </Snackbar>
+                <Snackbar
+                  open={showMessageError}
+                  autoHideDuration={2000}
+                  onClose={() => setShowMessageError(false)}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                >
+                  <Alert
+                    icon={<CheckIcon fontSize="inherit" />}
+                    severity="error"
+                    onClose={() => setShowMessageError(false)}
+                  >
+                    Hubo un error al enviar la plantilla.
+                  </Alert>
+                </Snackbar>
               </Box>
             )}
           </Grid>
