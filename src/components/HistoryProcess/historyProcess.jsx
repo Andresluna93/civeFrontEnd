@@ -62,7 +62,6 @@ const servicesListItem = [
 ];
 
 export default function VerticalLinearStepper({ data, onFinalizado }) {
-  console.log(data);
   const [open, setOpen] = useState(false);
   const [serviceItem, setServiceItem] = useState(null);
   //const [fecha, setFecha] = useState(null);
@@ -131,13 +130,9 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
       if (activeStep === data.statusH.length) {
         // If the user has completed all steps and hits "Finish", focus the "Reset" button.
         resetButtonRef.current?.focus();
-        console.log(
-          "If the user has completed all steps and hits Finish, focus the Reset button",
-        );
       } else {
         // Focus the "Continue" button otherwise.
         continueButtonRef.current?.focus();
-        console.log("Focus the continue button otherwise");
       }
       return;
     }
@@ -145,9 +140,6 @@ export default function VerticalLinearStepper({ data, onFinalizado }) {
 
     if (activeStep === 0) {
       // If the user hit "Back" on the second step, or hit "Reset", focus the "Continue" button.
-      console.log(
-        "If the user hit Back on the second step, or hit Reset, focus the Continue button.",
-      );
       continueButtonRef.current?.focus();
       return;
     }

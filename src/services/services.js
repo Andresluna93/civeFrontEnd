@@ -4,7 +4,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  //withCredentials: true // Para enviar cookies
+  withCredentials: true, // Para enviar cookies
 });
 
 // ==================== CITAS PÚBLICAS ====================
@@ -33,7 +33,48 @@ const adminApi = axios.create({
     "Content-Type": "application/json",
     "ngrok-skip-browser-warning": "true",
   },
+  withCredentials: true,
 });
+let isRefreshing = false;
+let pendingRequests = [];
+
+adminApi.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    const esLlamadaDeRefresh = originalRequest.url?.includes("/authUser/refresh");
+
+    if (error.response?.status === 401 && !originalRequest._retry && !esLlamadaDeRefresh) {
+      originalRequest._retry = true;
+
+      if (isRefreshing) {
+        // ya hay un refresh en curso: espera a que termine y reintenta con el nuevo token
+        return new Promise((resolve, reject) => {
+          pendingRequests.push({ resolve, reject, originalRequest });
+        });
+      }
+
+      isRefreshing = true;
+      try {
+        await adminApi.post("/authUser/refresh");
+        pendingRequests.forEach(({ resolve, originalRequest }) =>
+          resolve(adminApi(originalRequest)),
+        );
+        pendingRequests = [];
+        return adminApi(originalRequest);
+      } catch (refreshError) {
+        pendingRequests.forEach(({ reject }) => reject(refreshError));
+        pendingRequests = [];
+        window.location.href = "/login"; // el refresh también falló: sesión realmente expirada
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);
 
 // Instancia dedicada para envío de archivos (multipart/form-data).
 // No se fija "Content-Type" a mano: al pasar un FormData, el navegador
@@ -91,6 +132,10 @@ export const contactosAPI = {
 export const chatsAPI = {
   listar: async () => {
     const response = await adminApi.get("/chats/listarmensajes");
+    return response.data;
+  },
+  getTickets: async () => {
+    const response = await adminApi.get("/chats/get");
     return response.data;
   },
   mensajes: async (wa_id) => {

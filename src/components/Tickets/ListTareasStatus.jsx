@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { styled, alpha } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -6,26 +7,71 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemButton from "@mui/material/ListItemButton";
 import Avatar from "@mui/material/Avatar";
-import PersonIcon from "@mui/icons-material/Person";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
 import { Tickets } from "@/DB/tickers";
 import VerticalLinearStepper from "@/components/HistoryProcess/historyProcess";
-import axios from "axios";
+import { chatsAPI } from "@/services/services";
+import InputBase from "@mui/material/InputBase";
+import SearchIcon from "@mui/icons-material/Search";
+
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: theme.spacing(1),
+    width: "auto",
+  },
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "inherit",
+  width: "100%",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create("width"),
+    [theme.breakpoints.up("sm")]: {
+      width: "12ch",
+      "&:focus": {
+        width: "20ch",
+      },
+    },
+  },
+}));
 
 export default function TicketList({ status }) {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [informacion, setInformaciton] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
-  console.log(status);
+  const [busqueda, setBusqueda] = useState("");
+
   const fetchData = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get("/api/chats/get");
-      //console.log("Respuesta:", data);
-      const ordenado = [...data.data].sort(
+      const data = await chatsAPI.getTickets();
+      const lista = Array.isArray(data?.data) ? data.data : [];
+      const ordenado = [...lista].sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
       );
       setInformaciton(ordenado);
@@ -44,6 +90,12 @@ export default function TicketList({ status }) {
     setShowSuccess(true);
     fetchData();
   };
+
+  const ticketsFiltrados = informacion.filter((ticket) =>
+    `${ticket.ticket} ${ticket.wa_id}`
+      .toLowerCase()
+      .includes(busqueda.toLowerCase()),
+  );
 
   return (
     <>
@@ -79,9 +131,29 @@ export default function TicketList({ status }) {
               },
             }}
           >
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+              />
+            </Search>
             <List sx={{ bgcolor: "background.paper" }}>
-              {informacion.map((e) => {
-                if (status === e.status.v) {
+              {informacion.filter((e) => status === e?.status?.v).length ===
+                0 && (
+                <Typography
+                  variant="body2"
+                  sx={{ color: "text.secondary", px: 2, py: 2 }}
+                >
+                  No hay requerimientos en este estado.
+                </Typography>
+              )}
+              {ticketsFiltrados.map((e) => {
+                if (status === e?.status?.v) {
                   return (
                     <ListItemButton
                       key={e._id}

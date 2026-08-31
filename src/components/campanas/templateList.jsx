@@ -344,9 +344,9 @@ export default function TemplateList() {
                           <VisibilityIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Estadisticas">
+                      <Tooltip title="Metricas">
                         <IconButton
-                          aria-label="estadisticas"
+                          aria-label="metricas"
                           size="small"
                           onClick={() => handleOpenEstatics(template)}
                         >
@@ -424,7 +424,7 @@ export default function TemplateList() {
                       variant="h5"
                       component="h2"
                     >
-                      {`${selectedTemplate?.name}`}
+                      {`Metricas de la Plantilla ${selectedTemplate?.name}`}
                     </Typography>
                     <Box
                       id="parent-modal-description"
@@ -438,7 +438,17 @@ export default function TemplateList() {
                       <Grid container spacing={1} sx={{ mt: 1 }}>
                         {statConfig.map(({ key, label, color }) => (
                           <Grid key={key} size={6}>
-                            <Card variant="outlined">
+                            <Card
+                              variant="outlined"
+                              sx={{
+                                transition:
+                                  "background-color 0.2s ease, box-shadow 0.2s ease",
+                                "&:hover": {
+                                  backgroundColor: "action.hover",
+                                  boxShadow: 2,
+                                },
+                              }}
+                            >
                               <CardActionArea
                                 onClick={() =>
                                   getMessagePerStatus(label, selectedTemplate)
@@ -464,7 +474,7 @@ export default function TemplateList() {
                         <Button
                           onClick={() => getAllMessagesStatus(selectedTemplate)}
                         >
-                          Descargar Todos
+                          Descargar Metricas
                         </Button>
                       </Grid>
                     </Box>
